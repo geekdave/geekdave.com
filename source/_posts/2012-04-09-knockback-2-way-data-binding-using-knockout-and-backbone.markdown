@@ -28,7 +28,11 @@ If you're not already familiar with Knockout, I strongly recommend taking 10 min
 
 The examples on the Knockback project page are a bit heavy and complex, which is unfortunate because the basic usage is quite simple.  Let's try out a super simple example:
 
-{% gist 2344757 form.html %}
+{% codeblock lang:js %}
+Name: <input data-bind="value: name" type="text"/><br>
+Age: <input data-bind="value: age" type="text"/><br>
+Evil: <input type="checkbox" data-bind="checked: evil" /><br>​
+{% endcodeblock %}
 
 Here, we've set up a form using plain old Knockout data-bind'ing syntax.  The "value" and "checked" properties point to property keys ("name", "age", and "evil")  which we expect to find on our backing model.  The "data-bind" syntax means that we expect two things to magically happen:
 
@@ -43,7 +47,22 @@ Here, we've set up a form using plain old Knockout data-bind'ing syntax.  The "
 
 To wire this up, let's set up a Backbone model to store our data, create a "bridge" view model using Knockback, and finally invoke the data-binding using Knockout.
 
-{% gist 2344757 script.js %}
+{% codeblock lang:js %}
+// create backbone model
+var backboneModel = new Backbone.Model({
+    name: "Montgomery Burns",
+    age: 102,
+    evil: true
+});
+ 
+// set up knockback (kb) bridge
+var viewModel = kb.viewModel(backboneModel, {
+    read_only: false
+});
+ 
+// engage knockout (ko) data bindings
+ko.applyBindings(viewModel);
+{% endcodeblock %}
 
 That's it!  Note the difference between the "kb" and "ko" API calls, which refer to Knockback and Knockout, respectively.  The call to "kb.viewModel" creates a Knockout view model which knows how to talk to a Backbone Model.  The call to "ko.applyBindings" tells Knockout to wire up the 2-way bindings with the UI.
 

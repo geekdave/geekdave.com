@@ -19,7 +19,19 @@ Like most of the Backbone examples you'll find on the web, the example Backbone 
 
 To illustrate the slippery slope of monolithic configurations in a large multi-module application, let's visit the land of make-believe.  Let's pretend that I just started my own online bookstore, and I've set up some simple routes to handle what my site needs:
 
-{% gist 2312084 smallrouter.js %}
+{% codeblock Small Router lang:js %}
+// Hamazon.com : We sell books!
+ 
+MyApp.Router = Backbone.Router.extend({
+    routes: {
+        ""             : "showBookstoreHomepage",
+        "search"       : "searchBooks",
+        "view/:bookId" : "viewBookDetail",
+        "cart"         : "showShoppingCart",
+        "account"      : "showMyAccount"
+    },
+});
+{% endcodeblock %}
 
 We've got routes for the various pages in my app, as well as subroutes that accept parameters for navigating to a specific book's page based on its ID.  This simple list of routes fits my current needs just perfectly, and my site is small and basic so it's OK to have knowledge of all its functionality defined in one place, right?
 
@@ -29,8 +41,31 @@ We've got routes for the various pages in my app, as well as subroutes that acce
 
 Flash forward 6 months... we've just been acquired by another company that also sells movies!  Well it turns out that searching for movies requires a totally different system than books.  Time to update the router!  We can't have one generic "search" route anymore, since searching for books and movies is different.  So instead, I'll create one subroute for "books" and one for "movies" and each can have their own "search" route.
 
-{% gist 2312084 mediumrouter.js %}
-
+{% codeblock Medium Router lang:js %}
+// Hamazon.com : We sell books... and movies!
+ 
+MyApp.Router = Backbone.Router.extend({
+    routes: {
+ 
+        // general landing page
+        ""                     : "showGeneralHomepage",
+ 
+        // routes for book store
+        "books"                : "showBookstoreHomepage",
+        "books/search"         : "searchBooks",
+        "books/view/:bookId"   : "viewBookDetail",
+ 
+        // routes for movie store
+        "movies"               : "showMovieHomepage",
+        "movies/search"        : "searchMovies",
+        "movies/view/:movieId" : "viewMovieDetail",
+ 
+        // routes for user account
+        "cart"         : "showShoppingCart",
+        "account"      : "showMyAccount"
+    },
+});
+{% endcodeblock %}
 
 ## We've got technical debt, and the loan shark is calling...
 
@@ -39,7 +74,49 @@ Holy smokes!  We just received a gazillion dollars of venture capital, and now 
 
 Now we've got trouble.  As each app team implements new features, they add new routes.  Since we're using a single Router for the whole site, they're constantly resolving Source Control conflicts, and our once-tiny little router config is starting to read more like an epic novel...
 
-{% gist 2312084 largerouter.js %}
+{% codeblock Large Router lang:js %}
+
+// Hamazon.com : We don't even know anymore...
+ 
+MyApp.Router = Backbone.Router.extend({
+    routes: {
+ 
+        // general landing page
+        ""                     : "showGeneralHomepage",
+ 
+        // routes for book store
+        "books"                : "showBookstoreHomepage",
+        "books/search"         : "searchBooks",
+        "books/view/:bookId"   : "viewBookDetail",
+ 
+        // routes for movie store
+        "movies"               : "showMovieHomepage",
+        "movies/search"        : "searchMovies",
+        "movies/view/:movieId" : "viewMovieDetail",
+ 
+        // routes for online games
+        "games"               : "showGamesHomepage",
+        "games/search"        : "searchGames",
+        "games/play/:gameId"  : "playGame",
+        "games/team/"         : "joinTeam",
+ 
+        // routes for streaming music
+        "music"               : "showMusicHomepage",
+        "music/search"        : "searchMusic",
+        "music/play/song/:songId"   : "playSong",
+        "music/play/album/:albumId" : "playAlbum",
+        "music/play/playlist/:playlistId" : "playAlbum",
+       
+        // TODO: make facebook clone.  add routes.
+        // TODO: i'm in ur backbone. bloating ur routz.
+ 
+        // routes for user account
+        "cart"         : "showShoppingCart",
+        "account"      : "showMyAccount"
+    },
+});
+
+{% endcodeblock %}
 
 We're only two weeks into new development, and our number of features (and necessary routes) is only going to grow with time.  This single router just isn't going to scale.  Wouldn't it be nice if each app team could have their own separate router config that's only concerned with their own module?
 
@@ -70,8 +147,46 @@ To realize our goal, we're going to need a small extension called backbone.subro
 
 First, let's re-define what our main router is.  Instead of representing a complete site map of the entire application, let's change our main router to only be responsible for redirecting to sub-modules.  Note the usage of the asterisk in the route definition.  This is called a [splat](http://documentcloud.github.com/backbone/#Router-routes), and is basically a wildcard, allowing the subroute to have any form.
 
-{% gist 2312084 app.js %}
-
+{% codeblock Base Router lang:js %}
+var MyApp = {};
+ 
+  MyApp.Router = Backbone.Router.extend({
+    routes: {
+        // general routes for cross-app functionality
+        ""                 : "showGeneralHomepage",
+        "cart"             : "showShoppingCart",
+        "account"          : "showMyAccount",
+ 
+        // module-specific subroutes:
+        // invoke the proper module and delegate to the module's 
+        // own SubRoute for handling the rest of the URL 
+        "books/*subroute"  : "invokeBooksModule",
+        "movies/*subroute" : "invokeMoviesModule",
+        "games/*subroute"  : "invokeGamesModule",
+        "music/*subroute"  : "invokeMusicModule"
+    },
+    invokeBooksModule: function(subroute) {
+      if (!MyApp.Routers.Books) { 
+            MyApp.Routers.Books = new MyApp.Books.Router("books/");
+        }
+    },
+    invokeMoviesModule: function(subroute) {
+      if (!MyApp.Routers.Movies) { 
+          MyApp.Routers.Movies = new MyApp.Movies.Router("movies/");
+      }
+    },
+    invokeGamesModule: function(subroute) {
+      if (!MyApp.Routers.Games) { 
+          MyApp.Routers.Games = new MyApp.Games.Router("games/");
+      }
+    }
+  });
+ 
+  // Actually initialize
+  new MyApp.Router();
+ 
+});
+{% endcodeblock %}
 
 Basically our main router should only care about the first "directory" in the URL path.  After that, it's the module's job to define a subroute.  In the above example, we've set the sub-routes to be lazy-loaded and assigned to a namespaced application property the first time they are used.  On subsequent invocations, we'll just use the already-assigned namespaced property instead of creating a new subroute.
 
@@ -88,8 +203,33 @@ Here's what the Subroute for the "books" module looks like:
 
 
 
-{% gist 2312084 books.js %}
-
+{% codeblock Books Subroute lang:js %}
+MyApp.Books.Router = Backbone.SubRoute.extend({
+    routes: {
+        
+        /* matches http://yourserver.org/books */
+        ""               : "showBookstoreHomepage", 
+        
+        /* matches http://yourserver.org/books/search */
+        "search"         : "searchBooks",           
+ 
+        /* matches http://yourserver.org/books/view/:bookId */
+        "view/:bookId"   : "viewBookDetail",     
+   
+    },
+    showBookstoreHomepage: function() {
+        // ...module-specific code
+    },
+    searchBooks: function() {
+        // ...module-specific code
+    },
+    viewBookDetail: function() {
+        // ...module-specific code
+    },
+ 
+ 
+});
+{% endcodeblock %}
 
  Note that we can define as many subroutes as we want, and the base router doesn't care.  Furthermore, these subroutes all use a _relative_ path so we don't have to redundantly specify the module name again.  This means that we can change the module name later on, or move it to another prefix later on, without having to change our routes.
 
