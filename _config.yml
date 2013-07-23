@@ -101,3 +101,8 @@ facebook_like: false
 stackoverflow_user: 424187
 linkedin_user: dcadwallader
 
+navigation:
+- text: Home
+  url: /
+- text: About
+  url: /about

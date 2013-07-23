@@ -14,7 +14,9 @@ Chris Coyier of the famous [css-tricks.com](http://css-tricks.com) site wrote a 
 
 For anyone already familiar with it, you may have used a common pattern where you linked to 3rd party JS libraries on Github like so:
 
-`https://raw.github.com/documentcloud/backbone/master/backbone.js`
+```
+https://raw.github.com/documentcloud/backbone/master/backbone.js
+```
 
 When viewing any file on Github, there is a "Raw" button that will give you a direct link to the file.  This is a handy way to reference JS files from services like JSFiddle.
 
@@ -24,7 +26,7 @@ This wasn't a problem until recently, when Google Chrome [implemented a security
 
 Unfortunately, this broke a lot of JSFiddles, resulting in this error:  
 
-`Refused to execute script from 'https://raw.github.com/documentcloud/backbone/master/backbone.js' because its MIME type ('text/plain') is not executable, and strict MIME type checking is enabled.`
+> Refused to execute script from 'https://raw.github.com/documentcloud/backbone/master/backbone.js' because its MIME type ('text/plain') is not executable, and strict MIME type checking is enabled.
 
 Luckily, someone came to the rescue and [created a service](http://rawgithub.com) that will proxy any file from raw.github.com and serve it with the correct MIME type.
 
@@ -32,6 +34,8 @@ All you have to do is remove the "dot" between "raw" and "github", so that your 
 
 So the above URL would instead be:
 
-`https://rawgithub.com/documentcloud/backbone/master/backbone.js`
+```
+https://rawgithub.com/documentcloud/backbone/master/backbone.js
+```
 
 Happy Fiddlin'!

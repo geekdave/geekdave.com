@@ -4,7 +4,7 @@ title: "about me"
 comments: false
 categories:
 ---
-[![](http://www.geekdave.com/static/me.jpg)](http://www.geekdave.com/static/me.jpg)
+{% img left http://www.geekdave.com/static/me.jpg Dave Cadwallader %}
 
 My name is Dave Cadwallader, and I'm a software engineer living in Evergreen, Colorado with my wife and newborn son.
 
