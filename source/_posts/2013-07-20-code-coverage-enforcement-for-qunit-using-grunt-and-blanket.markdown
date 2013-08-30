@@ -5,6 +5,8 @@ date: 2013-07-20 09:50
 comments: true
 categories: 
 - Testing 
+- QUnit
+- Grunt
 - Code Coverage
 - Continuous Integration
 ---

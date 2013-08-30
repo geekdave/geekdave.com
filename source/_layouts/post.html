@@ -6,8 +6,24 @@ single: true
 <div>
 <article class="hentry" role="article">
   {% include article.html %}
-  <footer>
+
+    <div style="padding-top:10px">
+        <center>Support this site with GitTip: <a href="https://www.gittip.com/geekdave/" target="new"><img src="http://badgr.co/gittip/geekdave.png" alt="Donate"/></a></center>
+    </div>
+    <footer>
     <hr>
+
+{% img left http://i.imgur.com/Q9BxZAP.jpg 220 180 %}
+Do you live in the San Francisco Bay Area?  Want to get <i>paid</i> to play with the latest and greatest web technology?<br><br>  My 
+company, <a href="http://modeln.com/" target="new">Model N</a>, is looking for an
+<u>experienced and motivated JavaScript developer</u> to help us build our next-generation UI framework.  Our 
+architecture uses Backbone, Marionette, Handlebars, jQuery, Sass, Compass, Grunt, and Mocha.  We contribute to 
+the <a href="https://github.com/ModelN" target="new">open source community</a>, and encourage our developers to
+dream big.
+      <br><br>
+Sound intriguing? <a href='http://jobvite.com/m?3hkyZgwT' target="new">Apply here</a> and tell them Dave sent you.
+      
+<hr>
     {% if page.category or page.categories or page.sharing != false %}
     <div class="row-fluid">
       {% if page.category or page.categories %}

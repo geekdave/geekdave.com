@@ -4,6 +4,11 @@ title: "Automated Code Coverage Enforcement for Mocha using Grunt and Blanket"
 date: 2013-08-02 09:04
 comments: true
 categories: 
+- Testing 
+- Mocha
+- Grunt
+- Code Coverage
+- Continuous Integration
 ---
 
 *I wrote a similar post about integrating QUnit with Grunt and Blanket.  This is the Mocha version.*
