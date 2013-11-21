@@ -51,9 +51,11 @@ Here's how it would look for a QUnit test runner called `test.html` and a minimu
 ```js
 grunt.initConfig({
   blanket_qunit: {
-    options: {
+    all: {
+      options: {
 		urls: ['test.html?coverage=true&gruntReport'],
         threshold: 20
+      }
     }
   }
 })
@@ -119,3 +121,5 @@ Note: If you want to see the code coverage percentages for *all files*, even tho
 I hope this is helpful!  If you give this plugin a try, please leave a comment and let me know how it goes for you...
 
 You can find the Grunt-Blanket-QUnit plugin here: [https://github.com/ModelN/grunt-blanket-qunit](https://github.com/ModelN/grunt-blanket-qunit)
+
+*EDIT 19 September 2013: Fixed issue in sample Grunt config file where `all` options map was missing, causing the task not to run.  Thanks to Md. Ziaul Haq and Thomas Junghans for pointing this out.*  
